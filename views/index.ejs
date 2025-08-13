@@ -8,6 +8,12 @@
   <% if (locals.user) {%>
     <h1>Welcome Back <%= user.username %>!</h1>
     <h2>You currently have $<%= user.money %></h2>
+    <ul>
+        <% for (var i = 0; i < transactions.length ; i++) { %>
+            <li> transaction id: <%= transactions[i].id %>,  user id: <%= transactions[i].user_id %>,  name: <%= transactions[i].name %>,  money: <%= transactions[i].money %>,  date: <%= transactions[i].date %></li>
+        <% } %>
+    </ul>
+    <a href="/transaction">Add transaction</a><br>
     <a href="/log-out">LOG OUT</a><br>
   <% } else { %>
     <h1>Please Log In</h1>
