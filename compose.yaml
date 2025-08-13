@@ -1,0 +1,35 @@
+services:
+  server:
+    build:
+      context: .
+    environment:
+      NODE_ENV: production
+    ports:
+      - 3000:3000
+    depends_on:
+      - db
+  db:
+    container_name: postgres0.5
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=mysecretpassword
+      - POSTGRES_DB=basics
+    ports:
+      - "5432:5432"
+    restart: always
+    volumes:
+    - pg_data:/var/lib/postgresql/data
+
+  pgadmin:
+    container_name: pgadmin4
+    image: dpage/pgadmin4:latest
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_MAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PW}
+    ports:
+      - "5050:80"
+    restart: always
+  
+volumes:
+  pg_data:
