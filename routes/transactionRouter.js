@@ -1,16 +1,15 @@
 const {Router} = require("express");
-const signUpRouter = Router();
+const transactionRouter = Router();
 const bcrypt = require("bcryptjs");
 const pool = require("../db/pool");
 
 signUpRouter.get("/", (req, res) => {
-    res.render("sign-up-form");
+    res.render("transaction");
 });
 
 signUpRouter.post("/", async (req, res, next) => {
  try {
-  const hashedPassword = await bcrypt.hash(req.body.password, 10);
-  await pool.query("insert into users (username, password) values ($1, $2)", [req.body.username, hashedPassword]);
+  await pool.query("insert into transactions (user_id, name_, money, date) values ($1, $2, $3, $4)", [req.body.id, name_, money, date]);
   res.redirect("/");
  } catch (error) {
     console.error(error);
@@ -18,4 +17,4 @@ signUpRouter.post("/", async (req, res, next) => {
    }
 });
 
-module.exports = signUpRouter;
+module.exports = transactionRouter;

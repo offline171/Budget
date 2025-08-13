@@ -7,7 +7,7 @@
 <body>
   <% if (locals.user) {%>
     <h1>Welcome Back <%= user.username %>!</h1>
-    <h2>What would you like to see?</h2>
+    <h2>You currently have $<%= user.money %></h2>
     <a href="/log-out">LOG OUT</a><br>
   <% } else { %>
     <h1>Please Log In</h1>
