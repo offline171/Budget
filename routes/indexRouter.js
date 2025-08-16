@@ -4,7 +4,10 @@ const pool = require("../db/pool");
 
 
 indexRouter.get("/", async function(req, res) {
-  const transactions = (await fetchTransactions(req.user.id));
+  let transactions = null;
+  if(req.user != null){
+    transactions = (await fetchTransactions(req.user.id));
+  }
   res.render("index", { user: req.user, transactions: transactions});
 });
 
