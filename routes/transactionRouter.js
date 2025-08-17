@@ -18,4 +18,20 @@ transactionRouter.post("/", async (req, res, next) => {
   }
 });
 
+transactionRouter.delete("/:id/delete", async (req, res, next) => {
+  console.log(`Transaction with id ${req.params.id} to be deleted`);
+  res.redirect("/");
+  /*
+  try {
+    const convetedMoney = Math.floor(req.body.money * 100);
+    await pool.query("DELETE FROM transactions WHERE id = $1", 
+      [req.body.id]);
+    res.redirect("/");
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+    */
+});
+
 module.exports = transactionRouter;
