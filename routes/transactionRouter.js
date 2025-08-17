@@ -1,6 +1,9 @@
 const {Router} = require("express");
+const methodOverride = require('method-override');
 const transactionRouter = Router();
 const pool = require("../db/pool");
+
+transactionRouter.use(methodOverride('_method'));
 
 transactionRouter.get("/", (req, res) => {
   res.render("transaction");
@@ -16,6 +19,11 @@ transactionRouter.post("/", async (req, res, next) => {
     console.error(error);
     next(error);
   }
+});
+
+transactionRouter.delete("/delete", async (req, res, next) => {
+  console.log(`Transaction with id null to be deleted`);
+  res.redirect("/");
 });
 
 transactionRouter.delete("/:id/delete", async (req, res, next) => {

@@ -3,6 +3,7 @@ const path = require("node:path");
 const { Pool } = require("pg");
 const express = require("express");
 const session = require("cookie-session");
+const methodOverride = require('method-override');
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
 const LocalStrategy = require('passport-local').Strategy;
@@ -21,6 +22,7 @@ app.set("view engine", "ejs");
 app.use(session({ secret: "cats", resave: false, saveUninitialized: false }));
 app.use(passport.session());
 app.use(express.urlencoded({ extended: false }));
+app.use(methodOverride('_method'));
 
 app.use("/log-in", logInRouter);
 app.use("/log-out", logOutRouter);
