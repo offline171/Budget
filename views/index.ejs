@@ -5,5 +5,27 @@
   <title>Log In</title>
 </head>
 <body>
-    <h1>Hello World!</h1>
+  <% if (locals.user) {%>
+    <h1>Welcome Back <%= user.username %> id: <%= user.id %>!</h1>
+    <h2>You currently have $<%= user.money %></h2>
+    <ul>
+        <% for (var i = 0; i < transactions.length ; i++) { %>
+            <li> transaction id: <%= transactions[i].id %>,  user id: <%= transactions[i].user_id %>,  name: <%= transactions[i].name %>,  
+              money: <%= transactions[i].money / 100 %>,  date: <%= transactions[i].date %></li>
+        <% } %>
+    </ul>
+    <a href="/transaction">Add transaction</a><br>
+    <a href="/log-out">LOG OUT</a><br>
+  <% } else { %>
+    <h1>Please Log In</h1>
+    <form action="/log-in" method="POST">
+      <label for="username">Username</label>
+      <input id="username" name="username" placeholder="username" type="text" />
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" />
+      <button type="submit">Log In</button>
+    </form>
+    <a href="/sign-up">SIGN UP</a>
+  <%}%>
 </body>
+</html>
