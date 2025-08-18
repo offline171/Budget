@@ -9,6 +9,11 @@ transactionRouter.get("/", (req, res) => {
   res.render("transaction");
 });
 
+transactionRouter.get("/update", (req, res) => {
+  res.render("updateTransaction");
+});
+
+
 transactionRouter.post("/", async (req, res, next) => {
   try {
     const convetedMoney = Math.floor(req.body.money * 100);
@@ -21,25 +26,42 @@ transactionRouter.post("/", async (req, res, next) => {
   }
 });
 
-transactionRouter.delete("/delete", async (req, res, next) => {
-  console.log(`Transaction with id null to be deleted`);
-  res.redirect("/");
-});
-
-transactionRouter.delete("/:id/delete", async (req, res, next) => {
-  console.log(`Transaction with id ${req.params.id} to be deleted`);
-  res.redirect("/");
-  /*
+transactionRouter.put("/:id/update", async (req, res, next) => {
+  console.log(`Transaction with id ${req.params.id} to be updated`);
   try {
-    const convetedMoney = Math.floor(req.body.money * 100);
-    await pool.query("DELETE FROM transactions WHERE id = $1", 
-      [req.body.id]);
+    await pool.query("UPDATE transactions SET name = $2, money = $3, date = $4 WHERE id = $1", 
+      [req.params.id, req.body.name_, convetedMoney, req.body.date]);
     res.redirect("/");
   } catch (error) {
     console.error(error);
     next(error);
   }
-    */
 });
+
+transactionRouter.delete("/:id/delete", async (req, res, next) => {
+  console.log(`Transaction with id ${req.params.id} to be deleted`);
+  try {
+    await pool.query("DELETE FROM transactions WHERE id = $1", 
+      [req.params.id]);
+    res.redirect("/");
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+async function verifyUser(user_id,transaction_id){
+  const rows = await pool.query("SELECT * FROM transaction WHERE id = $1", [transaction_id]);
+  const row = rows[0];
+  if(row){
+    if(row.user_id == user_id){
+      console.log()
+    } else {
+      console.log('User_id $1 does not match the transaction user id $2', [user_id, row.user_id]);
+    }
+  } else {
+    console.error('Error, cannot find transaction');
+  }
+}
 
 module.exports = transactionRouter;
