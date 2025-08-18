@@ -6,7 +6,7 @@
 </head>
 <body>
   <h1>Add transaction</h1>
-  <form action="/transaction/update?_method=PUT" method="POST">
+  <form action="/transaction/:id/update?_method=PUT" method="POST">
     <label for="name_">Label</label>
     <input id="name_" name="name_" type="text" />
     <label for="money">Amount</label>

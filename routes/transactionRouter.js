@@ -30,7 +30,7 @@ transactionRouter.put("/:id/update", async (req, res, next) => {
   console.log(`Transaction with id ${req.params.id} to be updated`);
   try {
     await pool.query("UPDATE transactions SET name = $2, money = $3, date = $4 WHERE id = $1", 
-      [req.params.id, req.body.name_, convetedMoney, req.body.date]);
+      [req.params.id, req.body.name_, req.body.money, req.body.date]);
     res.redirect("/");
   } catch (error) {
     console.error(error);
@@ -50,6 +50,7 @@ transactionRouter.delete("/:id/delete", async (req, res, next) => {
   }
 });
 
+//Add to delete and put functions
 async function verifyUser(user_id,transaction_id){
   const rows = await pool.query("SELECT * FROM transaction WHERE id = $1", [transaction_id]);
   const row = rows[0];
