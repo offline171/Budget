@@ -11,7 +11,11 @@ indexRouter.get("/", async function(req, res) {
   res.render("index", { user: req.user, transactions: transactions});
 });
 
-// get items for index
+indexRouter.get("/money", async function(req, res){
+
+});
+
+// get items for id
 async function fetchTransactions(user_id){
   try{
     const { rows } = await pool.query("SELECT * FROM transactions WHERE user_id = $1", [user_id]);
@@ -23,6 +27,21 @@ async function fetchTransactions(user_id){
     }
   } catch(error) {
     console.error('Error, cannot find transactions.');
+  }
+}
+
+// get user info for id
+async function fetchUser(id){
+  try{
+    const { rows } = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
+    const user = rows[0];
+    if(user) {
+      return user;
+    } else {
+      console.log('User not found');
+    }
+  } catch(error) {
+    console.error('Error, cannot find user.');
   }
 }
 

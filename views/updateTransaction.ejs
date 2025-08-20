@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Update transaction</title>
+  <title>Edit transaction</title>
 </head>
 <body>
-  <h1>Update transaction id = <%= transaction.id %> user = <%= user.username %> </h1>
+  <h1>Edit transaction id = <%= transaction.id %> user = <%= user.username %> </h1>
   <form action="/transaction/<%= transaction.id %>/update?_method=PUT" method="POST">
     <label for="name_">Label</label>
     <input id="name_" name="name_" type="text" />
