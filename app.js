@@ -13,6 +13,7 @@ const logOutRouter = require("./routes/logOutRouter");
 const logInRouter = require("./routes/logInRouter");
 const signUpRouter = require("./routes/signUpRouter");
 const transactionRouter = require("./routes/transactionRouter");
+const accountRouter = require("./routes/accountRouter");
 const pool = require("./db/pool");
 
 const app = express();
@@ -28,6 +29,7 @@ app.use("/log-in", logInRouter);
 app.use("/log-out", logOutRouter);
 app.use("/sign-up", signUpRouter);
 app.use("/transaction", transactionRouter);
+app.use("/account", accountRouter);
 app.use("/", indexRouter);
 
 // 3 functions below are important to create and maintain sessions

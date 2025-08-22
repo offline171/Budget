@@ -7,7 +7,8 @@
 <body>
   <% if (locals.user) {%>
     <h1>Welcome Back <%= user.username %> id: <%= user.id %>!</h1>
-    <h2>You currently have $<%= user.money %></h2>
+    <h2>You currently have $<%= user.money / 100 %></h2>
+    <a href="/account">See Account</a>
     <ul>
         <% for (var i = 0; i < transactions.length ; i++) { %>
             <li> transaction id: <%= transactions[i].id %>,  user id: <%= transactions[i].user_id %>,  name: <%= transactions[i].name %>,  
@@ -18,8 +19,7 @@
               </form>
         <% } %>
     </ul>
-    <a href="/transaction">Add transaction</a><br>
-    <a href="/log-out">LOG OUT</a><br>
+    <a href="/transaction">Add Transaction</a><br>
   <% } else { %>
     <h1>Please Log In</h1>
     <form action="/log-in" method="POST">

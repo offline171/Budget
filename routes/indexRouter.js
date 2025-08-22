@@ -11,10 +11,6 @@ indexRouter.get("/", async function(req, res) {
   res.render("index", { user: req.user, transactions: transactions});
 });
 
-indexRouter.get("/money", async function(req, res){
-
-});
-
 // get items for id
 async function fetchTransactions(user_id){
   try{
@@ -44,5 +40,6 @@ async function fetchUser(id){
     console.error('Error, cannot find user.');
   }
 }
+
 
 module.exports = indexRouter;
