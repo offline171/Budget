@@ -32,6 +32,7 @@ transactionRouter.put("/:id/update", async (req, res, next) => {
   console.log(`Transaction with id ${req.params.id} to be updated`);
   try {
     const convetedMoney = Math.floor(req.body.money * 100);
+    console.log(`Transaction with date ${req.body.date} to be updated`)
     await pool.query("UPDATE transactions SET name = $2, money = $3, date = $4 WHERE id = $1", 
       [req.params.id, req.body.name_, convetedMoney, req.body.date]);
     res.redirect("/");

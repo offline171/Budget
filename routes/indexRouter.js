@@ -1,20 +1,20 @@
 const {Router} = require("express");
+var moment = require('moment');
 const indexRouter = Router();
 const pool = require("../db/pool");
-
 
 indexRouter.get("/", async function(req, res) {
   let transactions = null;
   if(req.user != null){
     transactions = (await fetchTransactions(req.user.id));
   }
-  res.render("index", { user: req.user, transactions: transactions});
+  res.render("index", { user: req.user, transactions: transactions, moment: moment});
 });
 
 // get items for id
 async function fetchTransactions(user_id){
   try{
-    const { rows } = await pool.query("SELECT * FROM transactions WHERE user_id = $1", [user_id]);
+    const { rows } = await pool.query("SELECT * FROM transactions WHERE user_id = $1 ORDER BY date", [user_id]);
     const items = rows;
     if(items) {
       return items;
