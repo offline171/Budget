@@ -8,11 +8,11 @@
   <h1>Edit transaction id = <%= transaction.id %> user = <%= user.username %> </h1>
   <form action="/transaction/<%= transaction.id %>/update?_method=PUT" method="POST">
     <label for="name_">Label</label>
-    <input id="name_" name="name_" type="text" />
+    <input id="name_" name="name_" type="text" required/>
     <label for="money">Amount</label>
-    <input id="money" name="money" type="number" step = "0.01"/>
+    <input id="money" name="money" type="number" step = "0.01" required/>
     <label for="date">Date</label>
-    <input id="date" name="date" type="date" />
+    <input id="date" name="date" type="date" required/>
     <button type="submit">Submit</button>
   </form>
     <a href="/">Quit</a>
