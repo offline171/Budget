@@ -10,7 +10,6 @@ accountRouter.get("/", async function(req, res){
 });
 
 accountRouter.put("/money", async (req, res, next) => {
-  console.log(`Account balance with id ${req.user.id} and money id ${req.body.money} to be updated`);
   try {
     const convetedMoney = Math.floor(req.body.money * 100);
     await pool.query("UPDATE users SET money = $2 WHERE id = $1", 

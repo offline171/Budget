@@ -29,10 +29,8 @@ transactionRouter.post("/", async (req, res, next) => {
 });
 
 transactionRouter.put("/:id/update", async (req, res, next) => {
-  console.log(`Transaction with id ${req.params.id} to be updated`);
   try {
     const convetedMoney = Math.floor(req.body.money * 100);
-    console.log(`Transaction with date ${req.body.date} to be updated`)
     await pool.query("UPDATE transactions SET name = $2, money = $3, date = $4 WHERE id = $1", 
       [req.params.id, req.body.name_, convetedMoney, req.body.date]);
     res.redirect("/");
@@ -43,7 +41,6 @@ transactionRouter.put("/:id/update", async (req, res, next) => {
 });
 
 transactionRouter.delete("/:id/delete", async (req, res, next) => {
-  console.log(`Transaction with id ${req.params.id} to be deleted`);
   try {
     await pool.query("DELETE FROM transactions WHERE id = $1", 
       [req.params.id]);
@@ -60,7 +57,6 @@ async function fetchTransaction(id){
     const { rows } = await pool.query("SELECT * FROM transactions WHERE id = $1", [id]);
     const item = rows[0];
     if(item) {
-      console.log('Transaction found with id $1', [item.id]);
       return item;
     } else {
       console.log('Transaction not found');
