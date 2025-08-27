@@ -7,7 +7,8 @@
 <body>
   <% if (locals.user) {%>
     <h1>Welcome Back <%= user.username %> id: <%= user.id %>!</h1>
-    <h2>You currently have $<%= (user.money / 100).toFixed(2) %></h2>
+    <h2>Your current balance is $<%= (user.money / 100).toFixed(2) %></h2>
+    <h2>Your available credit is $<%= (user.credit / 100).toFixed(2) %></h2>
     <a href="/account">See Account</a>
     <ul>
         <% for (var i = 0; i < transactions.length ; i++) { %>
