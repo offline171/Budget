@@ -40,6 +40,28 @@ transactionRouter.put("/:id/update", async (req, res, next) => {
   }
 });
 
+transactionRouter.put("/:id/pay", async (req, res, next) => {
+  try {
+    await pool.query("UPDATE transactions SET paid = $2 WHERE id = $1", 
+      [req.params.id, TRUE]);
+    res.redirect("/");
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+transactionRouter.put("/:id/undo", async (req, res, next) => {
+  try {
+    await pool.query("UPDATE transactions SET paid = $2 WHERE id = $1", 
+      [req.params.id, FALSE]);
+    res.redirect("/");
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 transactionRouter.delete("/:id/delete", async (req, res, next) => {
   try {
     await pool.query("DELETE FROM transactions WHERE id = $1", 
