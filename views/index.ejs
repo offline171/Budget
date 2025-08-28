@@ -14,7 +14,7 @@
         <% for (var i = 0; i < transactions.length ; i++) { %>
             <li> transaction id: <%= transactions[i].id %>,  user id: <%= transactions[i].user_id %>,  name: <%= transactions[i].name %>,  
               money: <%= (transactions[i].money / 100).toFixed(2) %>,  date: <%= moment(transactions[i].date).format('MMMM Do, YYYY'); %> </li> 
-            <% if (transactions[i].paid) { %>
+            <% if (!transactions[i].paid) { %>
               <form action="/transaction/<%= transactions[i].id %>/pay?_method=PUT" method="POST">
                 <button type="submit">Pay off</button>
               </form>

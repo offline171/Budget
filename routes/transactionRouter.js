@@ -31,8 +31,8 @@ transactionRouter.post("/", async (req, res, next) => {
 transactionRouter.put("/:id/update", async (req, res, next) => {
   try {
     const convetedMoney = Math.floor(req.body.money * 100);
-    await pool.query("UPDATE transactions SET name = $2, money = $3, date = $4 WHERE id = $1", 
-      [req.params.id, req.body.name_, convetedMoney, req.body.date]);
+    await pool.query("UPDATE transactions SET name = $2, money = $3, date = $4, paid = $5 WHERE id = $1", 
+      [req.params.id, req.body.name_, convetedMoney, req.body.date, false]);
     res.redirect("/");
   } catch (error) {
     console.error(error);
@@ -43,7 +43,7 @@ transactionRouter.put("/:id/update", async (req, res, next) => {
 transactionRouter.put("/:id/pay", async (req, res, next) => {
   try {
     await pool.query("UPDATE transactions SET paid = $2 WHERE id = $1", 
-      [req.params.id, TRUE]);
+      [req.params.id, true]);
     res.redirect("/");
   } catch (error) {
     console.error(error);
@@ -54,7 +54,7 @@ transactionRouter.put("/:id/pay", async (req, res, next) => {
 transactionRouter.put("/:id/undo", async (req, res, next) => {
   try {
     await pool.query("UPDATE transactions SET paid = $2 WHERE id = $1", 
-      [req.params.id, FALSE]);
+      [req.params.id, false]);
     res.redirect("/");
   } catch (error) {
     console.error(error);
@@ -72,6 +72,10 @@ transactionRouter.delete("/:id/delete", async (req, res, next) => {
     next(error);
   }
 });
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+////                                  Helper Functions                                        ////
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 // get transaction for update
 async function fetchTransaction(id){
