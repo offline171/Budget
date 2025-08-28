@@ -49,12 +49,30 @@ transactionRouter.put("/:id/pay", async (req, res, next) => {
     console.error(error);
     next(error);
   }
+  const item = await fetchTransaction(req.params.id);
+  try {
+    await pool.query("UPDATE users SET money = money - $2 WHERE id = $1", 
+      [req.user.id, item.money]);
+    res.redirect("/");
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
 });
 
 transactionRouter.put("/:id/undo", async (req, res, next) => {
   try {
     await pool.query("UPDATE transactions SET paid = $2 WHERE id = $1", 
       [req.params.id, false]);
+    res.redirect("/");
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+  const item = await fetchTransaction(req.params.id);
+  try {
+    await pool.query("UPDATE users SET money = money + $2 WHERE id = $1", 
+      [req.user.id, item.money]);
     res.redirect("/");
   } catch (error) {
     console.error(error);

@@ -8,8 +8,8 @@ indexRouter.get("/", async function(req, res) {
   if(req.user != null){
     transactions = (await fetchTransactions(req.user.id));
   }
-  var remCredit = 0;
-  res.render("index", { user: req.user, transactions: transactions, moment: moment, remCredit: remCredit});
+  var usedCredit = 0;
+  res.render("index", { user: req.user, transactions: transactions, moment: moment, usedCredit: usedCredit});
 });
 
 // get items for id

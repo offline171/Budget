@@ -8,7 +8,8 @@
   <% if (locals.user) { %>
     <h1>Welcome Back <%= user.username %> id: <%= user.id %>!</h1>
     <h2>Your current balance is $<%= (user.money / 100).toFixed(2) %></h2>
-    <h2>Your available credit is $<%= ((user.credit / 100) - remCredit).toFixed(2) %></h2>
+    <h2>Your available credit is $<%= ((user.credit - usedCredit) / 100).toFixed(2) %></h2>
+    <h2>Your using $<%= (usedCredit / 100).toFixed(2) %> credit</h2>
     <a href="/account">See Account</a>
     <ul>
         <% for (var i = 0; i < transactions.length ; i++) { %>
@@ -18,11 +19,11 @@
               <form action="/transaction/<%= transactions[i].id %>/pay?_method=PUT" method="POST">
                 <button type="submit">Pay off</button>
               </form>
+              <% usedCredit += transactions[i].money %>
             <% } else { %>
               <form action="/transaction/<%= transactions[i].id %>/undo?_method=PUT" method="POST">
                 <button type="submit">Undo paying off</button>
               </form>
-              <% remCredit += transactions[i].money %>
             <% } %>
             <a href="/transaction/<%= transactions[i].id %>/update">Edit</a>
             <form action="/transaction/<%= transactions[i].id %>/delete?_method=DELETE" method="POST">
