@@ -21,4 +21,16 @@ accountRouter.put("/money", async (req, res, next) => {
   }
 });
 
+accountRouter.put("/credit", async (req, res, next) => {
+  try {
+    const convetedMoney = Math.floor(req.body.credit * 100);
+    await pool.query("UPDATE users SET credit = $2 WHERE id = $1", 
+      [req.user.id, convetedMoney]);
+    res.redirect("/account");
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 module.exports = accountRouter;
