@@ -15,6 +15,10 @@ transactionRouter.get("/:id/update", async function(req, res) {
   res.render("updateTransaction", {user: req.user, transaction: item});
 });
 
+transactionRouter.get("/closing-date", async function(req, res) {
+  res.render("closingDate");
+});
+
 
 transactionRouter.post("/", async (req, res, next) => {
   try {

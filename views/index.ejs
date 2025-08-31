@@ -47,6 +47,7 @@
     <% } %>
     <h2>Your credit utilization is <%= ((usedCredit/tempCredit) * 100).toFixed(2) %>%</h2>
     <a href="/transaction">Add Transaction</a><br>
+    <a href="/transaction/closing-date">Add Closing Date</a><br>
   <% } else { %>
     <h1>Please Log In</h1>
     <form action="/log-in" method="POST">
