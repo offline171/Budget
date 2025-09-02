@@ -10,8 +10,9 @@ indexRouter.get("/", async function(req, res) {
   }
   var usedCredit = 0;
   var totalSum = 0;
+  var closingSum = 0;
   res.render("index", { user: req.user, transactions: transactions, moment: moment, 
-    usedCredit: usedCredit, totalSum: totalSum});
+    usedCredit: usedCredit, totalSum: totalSum, closingSum: closingSum});
 });
 
 // get items for id
