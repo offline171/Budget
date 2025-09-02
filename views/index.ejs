@@ -8,9 +8,13 @@
   <% if (locals.user) { %>
     <h1>Welcome Back <%= user.username %> id: <%= user.id %>!</h1>
     <% for (var i = 0; i < transactions.length ; i++) { %>
+      <% if(transactions[i].money == -1) { %>
+        <% continue; %>
+      <% } %>
       <% totalSum += transactions[i].money %>
       <% if(!transactions[i].paid){ %>
         <% usedCredit += transactions[i].money %>
+        <% console.log('totalSum = $1 and usedCredit = $2 and transactionMoney = $3', [totalSum, usedCredit, transactions[i].money]) %>
       <% } %>
     <% } %>
     <h2>You have $<%= (user.money / 100).toFixed(2) %> in savings</h2>
@@ -53,6 +57,8 @@
     <h2>Your credit utilization is <%= ((usedCredit/tempCredit) * 100).toFixed(2) %>%</h2>
     <a href="/transaction">Add Transaction</a><br>
     <form action="/transaction/closing-date" method="POST">
+      <label for="date">Date</label>
+      <input id="date" name="date" type="date" required/>
       <button type="submit">Add Closing Date</button>
     </form>
   <% } else { %>
