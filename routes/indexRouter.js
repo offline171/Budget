@@ -8,13 +8,17 @@ indexRouter.get("/", async function(req, res) {
   if(req.user != null){
     transactions = (await fetchTransactions(req.user.id));
   }
-  res.render("index", { user: req.user, transactions: transactions, moment: moment});
+  var usedCredit = 0;
+  var totalSum = 0;
+  var closingSum = 0;
+  res.render("index", { user: req.user, transactions: transactions, moment: moment, 
+    usedCredit: usedCredit, totalSum: totalSum, closingSum: closingSum});
 });
 
 // get items for id
 async function fetchTransactions(user_id){
   try{
-    const { rows } = await pool.query("SELECT * FROM transactions WHERE user_id = $1 ORDER BY date", [user_id]);
+    const { rows } = await pool.query("SELECT * FROM transactions WHERE user_id = $1 ORDER BY date, id", [user_id]);
     const items = rows;
     if(items) {
       return items;

@@ -5,21 +5,62 @@
   <title>Log In</title>
 </head>
 <body>
-  <% if (locals.user) {%>
+  <% if (locals.user) { %>
     <h1>Welcome Back <%= user.username %> id: <%= user.id %>!</h1>
-    <h2>You currently have $<%= (user.money / 100).toFixed(2) %></h2>
+    <% for (var i = 0; i < transactions.length ; i++) { %>
+      <% if(transactions[i].money == -1) { %>
+        <% continue; %>
+      <% } %>
+      <% totalSum += transactions[i].money %>
+      <% if(!transactions[i].paid){ %>
+        <% usedCredit += transactions[i].money %>
+        <% console.log('totalSum = $1 and usedCredit = $2 and transactionMoney = $3', [totalSum, usedCredit, transactions[i].money]) %>
+      <% } %>
+    <% } %>
+    <h2>You have $<%= (user.money / 100).toFixed(2) %> in savings</h2>
+    <h2>Your credit balance is $<%= (usedCredit / 100).toFixed(2) %> / $<%= (user.credit / 100).toFixed(2) %></h2>
     <a href="/account">See Account</a>
     <ul>
-        <% for (var i = 0; i < transactions.length ; i++) { %>
-            <li> transaction id: <%= transactions[i].id %>,  user id: <%= transactions[i].user_id %>,  name: <%= transactions[i].name %>,  
-              money: <%= (transactions[i].money / 100).toFixed(2) %>,  date: <%= moment(transactions[i].date).format('MMMM Do, YYYY'); %> </li> 
-              <a href="/transaction/<%= transactions[i].id %>/update">Edit</a>
-              <form action="/transaction/<%= transactions[i].id %>/delete?_method=DELETE" method="POST">
-                <button type="submit" onclick="return confirm('Are you sure you want to delete this transaction?');">Delete</button>
-              </form>
+      <% for (var i = 0; i < transactions.length ; i++) { %>
+        <% if (transactions[i].money == -1){ %>
+          <li> Closing date: <%= moment(transactions[i].date).format('MMMM Do, YYYY'); %>, Money owed: <%= (closingSum / 100).toFixed(2) %>, 
+            transaction id: <%= transactions[i].id %>,  user id: <%= transactions[i].user_id %>,  name: <%= transactions[i].name %></li>
+          <% closingSum = 0 %>
+          <form action="/transaction/<%= transactions[i].id %>/delete?_method=DELETE" method="POST">
+            <button type="submit" onclick="return confirm('Are you sure you want to delete this closing date?');">Delete</button>
+          </form>
+        <% } else { %>
+          <li> transaction id: <%= transactions[i].id %>,  user id: <%= transactions[i].user_id %>,  name: <%= transactions[i].name %>,  
+            money: <%= (transactions[i].money / 100).toFixed(2) %>,  date: <%= moment(transactions[i].date).format('MMMM Do, YYYY'); %> </li> 
+          <% if (!transactions[i].paid) { %>
+            <form action="/transaction/<%= transactions[i].id %>/pay?_method=PUT" method="POST">
+              <button type="submit">Pay off</button>
+            </form>
+            <% closingSum += transactions[i].money %>
+          <% } else { %>
+            <form action="/transaction/<%= transactions[i].id %>/undo?_method=PUT" method="POST">
+              <button type="submit">Undo paying off</button>
+            </form>
+          <% } %>
+          <a href="/transaction/<%= transactions[i].id %>/update">Edit</a>
+          <form action="/transaction/<%= transactions[i].id %>/delete?_method=DELETE" method="POST">
+            <button type="submit" onclick="return confirm('Are you sure you want to delete this transaction?');">Delete</button>
+          </form>
         <% } %>
+      <% } %>
     </ul>
+    <h2>Your total spending is $<%= (totalSum / 100).toFixed(2) %></h2>
+    <% tempCredit = user.credit %>
+    <% if(!tempCredit) { %>
+      <% tempCredit = 1 %>
+    <% } %>
+    <h2>Your credit utilization is <%= ((usedCredit/tempCredit) * 100).toFixed(2) %>%</h2>
     <a href="/transaction">Add Transaction</a><br>
+    <form action="/transaction/closing-date" method="POST">
+      <label for="date">Date</label>
+      <input id="date" name="date" type="date" required/>
+      <button type="submit">Add Closing Date</button>
+    </form>
   <% } else { %>
     <h1>Please Log In</h1>
     <form action="/log-in" method="POST">
