@@ -8,7 +8,8 @@
   <% if (locals.user) { %>
     <h1>Welcome Back <%= user.username %> id: <%= user.id %>!</h1>
     <% for (var i = 0; i < transactions.length ; i++) { %>
-      <% if(transactions[i].money == -1) { %>
+      <% if (transactions[i].name === "closing-date-official") { %>
+        <% console.log('skipping transaction name = $1', [transactions[i].name]) %>
         <% continue; %>
       <% } %>
       <% totalSum += transactions[i].money %>
@@ -22,7 +23,7 @@
     <a href="/account">See Account</a>
     <ul>
       <% for (var i = 0; i < transactions.length ; i++) { %>
-        <% if (transactions[i].money == -1){ %>
+        <% if (transactions[i].name === "closing-date-official"){ %>
           <li> Closing date: <%= moment(transactions[i].date).format('MMMM Do, YYYY'); %>, Money owed: <%= (closingSum / 100).toFixed(2) %>, 
             transaction id: <%= transactions[i].id %>,  user id: <%= transactions[i].user_id %>,  name: <%= transactions[i].name %></li>
           <% closingSum = 0 %>

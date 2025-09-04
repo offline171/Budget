@@ -18,8 +18,8 @@ transactionRouter.get("/:id/update", async function(req, res) {
 transactionRouter.post("/", async (req, res, next) => {
   try {
     const convetedMoney = Math.floor(req.body.money * 100);
-    await pool.query("insert into transactions (user_id, name, money, date) values ($1, $2, $3, $4)", 
-      [req.user.id, req.body.name_, convetedMoney, req.body.date]);
+    await pool.query("insert into transactions (user_id, name, money, date, paid) values ($1, $2, $3, $4, $5)", 
+      [req.user.id, req.body.name_, convetedMoney, req.body.date, false]);
     res.redirect("/");
   } catch (error) {
     console.error(error);
@@ -29,8 +29,8 @@ transactionRouter.post("/", async (req, res, next) => {
 
 transactionRouter.post("/closing-date", async (req, res, next) => {
   try {
-    await pool.query("insert into transactions (user_id, name, money, date) values ($1, $2, $3, $4)", 
-      [req.user.id, "closing-date", -1, req.body.date]);
+    await pool.query("insert into transactions (user_id, name, money, date, paid) values ($1, $2, $3, $4, $5)", 
+      [req.user.id, "closing-date-official", -1, req.body.date, true]);
     res.redirect("/");
   } catch (error) {
     console.error(error);
