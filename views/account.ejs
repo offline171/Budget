@@ -19,10 +19,10 @@
     <button type="submit">Change Account Balance</button>
   </form>
   <h2>Pay off credit?</h2>
-  <form action="/account/credit?_method=PUT" method="POST">
-    <label for="credit">Amount</label>
-    <input id="credit" name="credit" type="number" step = "0.01" required/>
-    <button type="submit">Pay off Balance</button>
+  <form action="/transaction/pay-off" method="POST">
+    <label for="money">Amount</label>
+    <input id="money" name="money" type="number" step = "0.01" required min = "0.01"/>
+    <button type="submit">Pay Off Credit</button>
   </form>
 <a href="/">Back</a><br>
 <a href="/log-out">LOG OUT</a><br>

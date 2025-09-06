@@ -38,6 +38,19 @@ transactionRouter.post("/closing-date", async (req, res, next) => {
   }
 });
 
+transactionRouter.post("/pay-off", async (req, res, next) => {
+  try {
+    const currentDate = new Date();
+    const convetedMoney = Math.floor(req.body.money * 100);
+    await pool.query("insert into transactions (user_id, name, money, date, paid) values ($1, $2, $3, $4, $5)", 
+      [req.user.id, "pay-off-official", convetedMoney, currentDate, true]);
+    res.redirect("/");
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 transactionRouter.put("/:id/update", async (req, res, next) => {
   try {
     const convetedMoney = Math.floor(req.body.money * 100);
