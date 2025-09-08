@@ -42,8 +42,11 @@ transactionRouter.post("/pay-off", async (req, res, next) => {
   try {
     const currentDate = new Date();
     const convetedMoney = Math.floor(req.body.money * 100);
+  console.log('paying off money = $1', [req.body.money]);
     await pool.query("insert into transactions (user_id, name, money, date, paid) values ($1, $2, $3, $4, $5)", 
       [req.user.id, "pay-off-official", convetedMoney, currentDate, true]);
+    await pool.query("UPDATE users SET money = money - $2 WHERE id = $1", 
+      [req.user.id, convetedMoney]);
     res.redirect("/");
   } catch (error) {
     console.error(error);
@@ -93,6 +96,11 @@ transactionRouter.put("/:id/undo", async (req, res, next) => {
 
 transactionRouter.delete("/:id/delete", async (req, res, next) => {
   try {
+    const item = await fetchTransaction(req.params.id);
+    if(item.name === "pay-off-official"){
+      await pool.query("UPDATE users SET money = money + $2 WHERE id = $1", 
+        [req.user.id, item.money]);
+    }
     await pool.query("DELETE FROM transactions WHERE id = $1", 
       [req.params.id]);
     res.redirect("/");
