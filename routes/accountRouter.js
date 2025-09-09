@@ -33,4 +33,16 @@ accountRouter.put("/credit", async (req, res, next) => {
   }
 });
 
+accountRouter.put("/credit-subtract", async (req, res, next) => {
+  try {
+    const convetedMoney = Math.floor((req.body.credit) * 100);
+    await pool.query("UPDATE users SET credit = credit - $2 WHERE id = $1",   //only one input changed, ideally find better way to handle this
+      [req.user.id, convetedMoney]);
+    res.redirect("/account");
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 module.exports = accountRouter;
