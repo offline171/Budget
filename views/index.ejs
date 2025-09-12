@@ -59,6 +59,9 @@
     <% } %>
     <h2>Your credit utilization is <%= ((usedCredit/tempCredit) * 100).toFixed(2) %>%</h2>
     <a href="/transaction">Add Transaction</a><br>
+    <% if(totalSum != 0) { %>
+      <h2>Consider adding a closing date!</h2>
+    <% } %>
     <form action="/transaction/closing-date" method="POST">
       <label for="date">Date</label>
       <input id="date" name="date" type="date" required/>
