@@ -18,8 +18,8 @@ transactionRouter.get("/:id/update", async function(req, res) {
 transactionRouter.post("/", async (req, res, next) => {
   try {
     const convetedMoney = Math.floor(req.body.money * 100);
-    await pool.query("insert into transactions (user_id, name, money, date, paid) values ($1, $2, $3, $4, $5)", 
-      [req.user.id, req.body.name_, convetedMoney, req.body.date, false]);
+    await pool.query("insert into transactions (user_id, name, money, date) values ($1, $2, $3, $4)", 
+      [req.user.id, req.body.name_, convetedMoney, req.body.date]);
     res.redirect("/");
   } catch (error) {
     console.error(error);
@@ -29,8 +29,8 @@ transactionRouter.post("/", async (req, res, next) => {
 
 transactionRouter.post("/closing-date", async (req, res, next) => {
   try {
-    await pool.query("insert into transactions (user_id, name, money, date, paid) values ($1, $2, $3, $4, $5)", 
-      [req.user.id, "closing-date-official", -1, req.body.date, true]);
+    await pool.query("insert into transactions (user_id, name, money, date) values ($1, $2, $3, $4)", 
+      [req.user.id, "closing-date-official", -1, req.body.date]);
     res.redirect("/");
   } catch (error) {
     console.error(error);
@@ -43,8 +43,8 @@ transactionRouter.post("/pay-off", async (req, res, next) => {
     const currentDate = new Date();
     const convetedMoney = Math.floor(req.body.money * 100);
   console.log('paying off money = $1', [req.body.money]);
-    await pool.query("insert into transactions (user_id, name, money, date, paid) values ($1, $2, $3, $4, $5)", 
-      [req.user.id, "pay-off-official", convetedMoney, currentDate, true]);
+    await pool.query("insert into transactions (user_id, name, money, date) values ($1, $2, $3, $4)", 
+      [req.user.id, "pay-off-official", convetedMoney, currentDate]);
     await pool.query("UPDATE users SET money = money - $2 WHERE id = $1", 
       [req.user.id, convetedMoney]);
     res.redirect("/");
@@ -57,8 +57,8 @@ transactionRouter.post("/pay-off", async (req, res, next) => {
 transactionRouter.put("/:id/update", async (req, res, next) => {
   try {
     const convetedMoney = Math.floor(req.body.money * 100);
-    await pool.query("UPDATE transactions SET name = $2, money = $3, date = $4, paid = $5 WHERE id = $1", 
-      [req.params.id, req.body.name_, convetedMoney, req.body.date, false]);
+    await pool.query("UPDATE transactions SET name = $2, money = $3, date = $4 WHERE id = $1", 
+      [req.params.id, req.body.name_, convetedMoney, req.body.date]);
     res.redirect("/");
   } catch (error) {
     console.error(error);
