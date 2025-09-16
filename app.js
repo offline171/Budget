@@ -2,11 +2,35 @@
 const path = require("node:path");
 const { Pool } = require("pg");
 const express = require("express");
-const session = require("cookie-session");
+const session = require("express-session");
+const pgSession = require('connect-pg-simple')(session);
 const methodOverride = require('method-override');
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
 const LocalStrategy = require('passport-local').Strategy;
+require('dotenv').config();
+
+// Import database migration
+const { runMigrations } = require('./db/migrate');
+
+// Environment validation
+const NODE_ENV = process.env.NODE_ENV || 'development';
+const isProduction = NODE_ENV === 'production';
+
+// Production environment checks
+if (isProduction) {
+  if (!process.env.SESSION_SECRET) {
+    console.error('ERROR: SESSION_SECRET is required in production');
+    process.exit(1);
+  }
+  if (!process.env.DATABASE_URL) {
+    console.error('ERROR: DATABASE_URL is required in production');
+    process.exit(1);
+  }
+  console.log('Running in PRODUCTION mode');
+} else {
+  console.log('Running in DEVELOPMENT mode');
+}
 
 const indexRouter = require("./routes/indexRouter");
 const logOutRouter = require("./routes/logOutRouter");
@@ -20,7 +44,32 @@ const app = express();
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
-app.use(session({ secret: "cats", resave: false, saveUninitialized: false }));
+// Trust proxy for production deployments (Heroku, Replit, etc.)
+if (isProduction) {
+  app.set('trust proxy', 1);
+}
+
+// Configure session with PostgreSQL store for persistence
+const sessionConfig = {
+  store: new pgSession({
+    pool: pool,
+    tableName: 'user_sessions',
+    createTableIfMissing: true
+  }),
+  secret: process.env.SESSION_SECRET || 'your-very-secure-secret-key-change-this-in-production',
+  resave: false,
+  saveUninitialized: false,
+  name: 'sessionId', // Don't use default session name
+  cookie: {
+    secure: isProduction, // Only send over HTTPS in production
+    httpOnly: true, // Prevent XSS attacks
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    sameSite: isProduction ? 'lax' : false // CSRF protection
+  }
+};
+
+app.use(session(sessionConfig));
+app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.urlencoded({ extended: false }));
 app.use(methodOverride('_method'));
@@ -69,4 +118,25 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-app.listen(3000, () => console.log("app listening on port 3000!"));
+// Run database migrations before starting server
+async function startServer() {
+  try {
+    console.log('Starting Budget Application...');
+    
+    // Run database migrations
+    await runMigrations();
+    
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`Budget app listening on port ${PORT}!`);
+      console.log(`Environment: ${NODE_ENV}`);
+      console.log(`Database connected: ${process.env.DATABASE_URL ? 'Yes' : 'No'}`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+}
+
+// Start the server
+startServer();

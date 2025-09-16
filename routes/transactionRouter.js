@@ -2,15 +2,19 @@ const {Router} = require("express");
 const methodOverride = require('method-override');
 const transactionRouter = Router();
 const pool = require("../db/pool");
+const { ensureAuthenticated, ensureOwnership } = require('../middleware/auth');
 
 transactionRouter.use(methodOverride('_method'));
+
+// Protect all transaction routes - user must be logged in
+transactionRouter.use(ensureAuthenticated);
 
 transactionRouter.get("/", (req, res) => {
   res.render("transaction");
 });
 
-transactionRouter.get("/:id/update", async function(req, res) {
-  const item = await fetchTransaction(req.params.id); //more to just make sure that the transaction exists
+transactionRouter.get("/:id/update", ensureOwnership, async function(req, res) {
+  const item = await fetchTransaction(req.params.id);
   console.log('looking for id = $1', [item.id]);
   res.render("updateTransaction", {user: req.user, transaction: item});
 });
@@ -54,11 +58,11 @@ transactionRouter.post("/pay-off", async (req, res, next) => {
   }
 });
 
-transactionRouter.put("/:id/update", async (req, res, next) => {
+transactionRouter.put("/:id/update", ensureOwnership, async (req, res, next) => {
   try {
     const convetedMoney = Math.floor(req.body.money * 100);
-    await pool.query("UPDATE transactions SET name = $2, money = $3, date = $4, paid = $5 WHERE id = $1", 
-      [req.params.id, req.body.name_, convetedMoney, req.body.date, false]);
+    await pool.query("UPDATE transactions SET name = $2, money = $3, date = $4, paid = $5 WHERE id = $1 AND user_id = $6", 
+      [req.params.id, req.body.name_, convetedMoney, req.body.date, false, req.user.id]);
     res.redirect("/");
   } catch (error) {
     console.error(error);
@@ -66,11 +70,11 @@ transactionRouter.put("/:id/update", async (req, res, next) => {
   }
 });
 
-transactionRouter.put("/:id/pay", async (req, res, next) => {
+transactionRouter.put("/:id/pay", ensureOwnership, async (req, res, next) => {
   try {
     const item = await fetchTransaction(req.params.id);
-    await pool.query("UPDATE transactions SET paid = $2 WHERE id = $1", 
-      [req.params.id, true]);
+    await pool.query("UPDATE transactions SET paid = $2 WHERE id = $1 AND user_id = $3", 
+      [req.params.id, true, req.user.id]);
     await pool.query("UPDATE users SET money = money - $2 WHERE id = $1", 
       [req.user.id, item.money]);
       res.redirect("/");
@@ -80,11 +84,11 @@ transactionRouter.put("/:id/pay", async (req, res, next) => {
   }
 });
 
-transactionRouter.put("/:id/undo", async (req, res, next) => {
+transactionRouter.put("/:id/undo", ensureOwnership, async (req, res, next) => {
   try {
     const item = await fetchTransaction(req.params.id);
-    await pool.query("UPDATE transactions SET paid = $2 WHERE id = $1", 
-      [req.params.id, false]);
+    await pool.query("UPDATE transactions SET paid = $2 WHERE id = $1 AND user_id = $3", 
+      [req.params.id, false, req.user.id]);
     await pool.query("UPDATE users SET money = money + $2 WHERE id = $1", 
       [req.user.id, item.money]);
       res.redirect("/");
@@ -94,15 +98,15 @@ transactionRouter.put("/:id/undo", async (req, res, next) => {
   }
 });
 
-transactionRouter.delete("/:id/delete", async (req, res, next) => {
+transactionRouter.delete("/:id/delete", ensureOwnership, async (req, res, next) => {
   try {
     const item = await fetchTransaction(req.params.id);
     if(item.name === "pay-off-official"){
       await pool.query("UPDATE users SET money = money + $2 WHERE id = $1", 
         [req.user.id, item.money]);
     }
-    await pool.query("DELETE FROM transactions WHERE id = $1", 
-      [req.params.id]);
+    await pool.query("DELETE FROM transactions WHERE id = $1 AND user_id = $2", 
+      [req.params.id, req.user.id]);
     res.redirect("/");
   } catch (error) {
     console.error(error);
