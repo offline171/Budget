@@ -56,6 +56,10 @@ transactionRouter.post("/pay-off", async (req, res, next) => {
 
 transactionRouter.put("/:id/update", async (req, res, next) => {
   try {
+    if(!await verifyUser(req.user.id, req.params.id)){
+      console.error(error);
+      next(error);
+    }
     const convetedMoney = Math.floor(req.body.money * 100);
     await pool.query("UPDATE transactions SET name = $2, money = $3, date = $4 WHERE id = $1", 
       [req.params.id, req.body.name_, convetedMoney, req.body.date]);
@@ -68,6 +72,10 @@ transactionRouter.put("/:id/update", async (req, res, next) => {
 
 transactionRouter.delete("/:id/delete", async (req, res, next) => {
   try {
+    if(!await verifyUser(req.user.id, req.params.id)){
+      console.error(error);
+      next(error);
+    }
     const item = await fetchTransaction(req.params.id);
     if(item.name === "pay-off-official"){
       await pool.query("UPDATE users SET money = money + $2 WHERE id = $1", 
@@ -108,11 +116,14 @@ async function verifyUser(user_id,transaction_id){
   if(row){
     if(row.user_id == user_id){
       console.log()
+      return 1;
     } else {
       console.log('User_id $1 does not match the transaction user id $2', [user_id, row.user_id]);
+      return 0;
     }
   } else {
     console.error('Error, cannot find transaction');
+    return 0;
   }
 }
 
