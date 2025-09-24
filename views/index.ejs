@@ -1,6 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <style>
+    .usual{
+      color: red;
+      font-size: 100%;
+    }
+
+    .pay {
+      color: green;
+      font-size: 120%;
+    }
+
+    .closing {
+      background-color: lightskyblue;
+      border: 2px solid black;
+      color: black;
+      font-size: 150%;
+      margin: 20px;
+      padding: 20px;
+    }
+  </style>
   <meta charset="UTF-8">
   <title>Log In</title>
 </head>
@@ -24,8 +44,8 @@
       <% for (var i = 0; i < transactions.length ; i++) { %>
 
         <% if (transactions[i].name === "closing-date-official"){ %>
-          <h3> Closing date: <%= moment(transactions[i].date).format('MMMM Do, YYYY'); %>, Money owed: <%= (closingSum / 100).toFixed(2) %>, 
-            transaction id: <%= transactions[i].id %>,  user id: <%= transactions[i].user_id %>,  Your total spending is $<%= (totalSum / 100).toFixed(2) %></h3>
+          <li class="closing"> Closing date: <%= moment(transactions[i].date).format('MMMM Do, YYYY'); %>, Money owed: <%= (closingSum / 100).toFixed(2) %>, 
+            transaction id: <%= transactions[i].id %>,  user id: <%= transactions[i].user_id %>,  Your total spending is $<%= (totalSum / 100).toFixed(2) %></li>
           <% closingSum = 0 %>
           <% totalSum = 0 %>
           <form action="/transaction/<%= transactions[i].id %>/delete?_method=DELETE" method="POST">
@@ -33,7 +53,7 @@
           </form>
 
         <% } else if (transactions[i].name === "pay-off-official") { %>
-          <li> Pay off amount: <%= (transactions[i].money / 100).toFixed(2) %>, transaction id: <%= transactions[i].id %>,  user id: <%= transactions[i].user_id %>,  
+          <li class="pay"> Pay off amount: <%= (transactions[i].money / 100).toFixed(2) %>, transaction id: <%= transactions[i].id %>,  user id: <%= transactions[i].user_id %>,  
               name: <%= transactions[i].name %>, date: <%= moment(transactions[i].date).format('MMMM Do, YYYY'); %> </li> 
           <% closingSum -= transactions[i].money %>
           <form action="/transaction/<%= transactions[i].id %>/delete?_method=DELETE" method="POST">
@@ -41,7 +61,7 @@
           </form>
 
         <% } else { %>
-          <li> transaction id: <%= transactions[i].id %>,  user id: <%= transactions[i].user_id %>,  name: <%= transactions[i].name %>,  
+          <li class="usual"> transaction id: <%= transactions[i].id %>,  user id: <%= transactions[i].user_id %>,  name: <%= transactions[i].name %>,  
             money: <%= (transactions[i].money / 100).toFixed(2) %>,  date: <%= moment(transactions[i].date).format('MMMM Do, YYYY'); %> </li> 
           <% closingSum += transactions[i].money %>
           <a href="/transaction/<%= transactions[i].id %>/update">Edit</a>
