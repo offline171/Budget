@@ -57,6 +57,7 @@ transactionRouter.post("/pay-off", async (req, res, next) => {
 transactionRouter.put("/:id/update", async (req, res, next) => {
   try {
     if(!await verifyUser(req.user.id, req.params.id)){
+      console.log("Something weird is going on here");
       console.error(error);
       next(error);
     }
