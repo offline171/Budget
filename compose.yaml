@@ -17,7 +17,6 @@ services:
       - POSTGRES_DB=basics
     ports:
       - "5432:5432"
-    restart: always
     volumes:
     - pg_data:/var/lib/postgresql/data
 
@@ -29,7 +28,6 @@ services:
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PW}
     ports:
       - "5050:80"
-    restart: always
     volumes:
     - pgadmin:/var/lib/pgadmin
   
